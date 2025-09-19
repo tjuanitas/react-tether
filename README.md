@@ -1,82 +1,75 @@
 # React Tether
 
-![CI Status](https://github.com/danreeves/react-tether/actions/workflows/main.yml/badge.svg)
-[![Sauce Test Status](https://app.saucelabs.com/buildstatus/react-tether)](https://app.saucelabs.com/u/react-tether)
+[![Build Status](https://travis-ci.org/danreeves/react-tether.svg?branch=browser-tests)](https://travis-ci.org/danreeves/react-tether) [![Dependency Status](https://david-dm.org/danreeves/react-tether.svg)](https://david-dm.org/danreeves/react-tether) [![Coverage Status](https://coveralls.io/repos/github/danreeves/react-tether/badge.svg?branch=master)](https://coveralls.io/github/danreeves/react-tether?branch=master)
+
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/react-tether.svg)](https://saucelabs.com/u/react-tether)
 
 > Cross-browser Testing Platform and Open Source <3 Provided by [Sauce Labs](https://saucelabs.com/).
 
 ---
 
-React wrapper around [Tether](https://github.com/shipshapecode/tether), a positioning engine to make overlays, tooltips and dropdowns better
+React wrapper around [Tether](https://github.com/hubspot/tether) from Hub Spot.
 
-![React Tether](images/tether-header.png)
+![alt tag](images/tether-demo.gif)
 
 ## Install
 
-`npm install react-tether`
+`npm install react-tether --save`
 
-**As of version 2, a minimum of React 16.3 is required. If you need support for React < 16.3 please use the [1.x branch](https://github.com/danreeves/react-tether/tree/1.x).**
+`bower install react-tether --save`
 
 ## Example Usage
 
 ```javascript
-import TetherComponent from "react-tether";
+import TetherComponent from 'react-tether';
 
 class SimpleDemo extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			isOpen: false,
-		};
-	}
+  constructor(props) {
+    super(props);
+    this.state = {
+      isOpen: false,
+    };
+  }
 
-	render() {
-		const { isOpen } = this.state;
+  render() {
+    const { isOpen } = this.state;
 
-		return (
-			<TetherComponent
-				attachment="top center"
-				constraints={[
-					{
-						to: "scrollParent",
-						attachment: "together",
-					},
-				]}
-				/* renderTarget: This is what the item will be tethered to, make sure to attach the ref */
-				renderTarget={(ref) => (
-					<button
-						ref={ref}
-						onClick={() => {
-							this.setState({ isOpen: !isOpen });
-						}}
-					>
-						Toggle Tethered Content
-					</button>
-				)}
-				/* renderElement: If present, this item will be tethered to the the component returned by renderTarget */
-				renderElement={(ref) =>
-					isOpen && (
-						<div ref={ref}>
-							<h2>Tethered Content</h2>
-							<p>A paragraph to accompany the title.</p>
-						</div>
-					)
-				}
-			/>
-		);
-	}
+    return (
+      <TetherComponent
+        attachment="top center"
+        constraints={[
+          {
+            to: 'scrollParent',
+            attachment: 'together',
+          },
+        ]}
+      >
+        {/* First child: This is what the item will be tethered to */}
+        <button
+          onClick={() => {
+            this.setState({ isOpen: !isOpen });
+          }}
+        >
+          Toggle Tethered Content
+        </button>
+        {/* Second child: If present, this item will be tethered to the the first child */}
+        {isOpen && (
+          <div>
+            <h2>Tethered Content</h2>
+            <p>A paragraph to accompany the title.</p>
+          </div>
+        )}
+      </TetherComponent>
+    );
+  }
 }
 ```
 
 ## Props
 
-#### `renderTarget`: PropTypes.func
+#### `children`: PropTypes.node.isRequired (2 Max)
 
-This is a [render prop](https://reactjs.org/docs/render-props.html), the component returned from this function will be Tether's `target`. One argument, ref, is passed into this function. This is a ref that must be attached to the highest possible DOM node in the tree. If this is not done the element will not render.
-
-#### `renderElement`: PropTypes.func
-
-This is a [render prop](https://reactjs.org/docs/render-props.html), the component returned from this function will be Tether's `element`, that will be moved. If no component is returned, the target will still render, but with no element tethered. One argument, ref, is passed into this function. This is a ref that must be attached to the highest possible DOM node in the tree. If this is not done the element will not render.
+The first child is used as the Tether's `target` and the second child (which is optional) is used as Tether's `element` that will be moved.
 
 #### `renderElementTag`: PropTypes.string
 
@@ -90,11 +83,7 @@ Tether requires this element to be `position: static;`, otherwise it will defaul
 
 #### `Tether Options`:
 
-Any valid [Tether options](https://tetherjs.dev/#usage).
-
-#### `children`:
-
-Previous versions of react-tether used children to render the target and component, using children will now throw an error. Please use renderTarget and renderElement instead
+Any valid [Tether options](http://tether.io/#options).
 
 ## Imperative API
 
@@ -111,13 +100,10 @@ The following methods are exposed on the component instance:
 #### Example usage:
 
 ```javascript
-<TetherComponent
-	ref={(tether) => (this.tether = tether)}
-	renderTarget={(ref) => <Target ref={ref} />}
-	renderElement={(ref) => (
-		<Element ref={ref} onResize={() => this.tether && this.tether.position()} />
-	)}
-/>
+<TetherComponent ref={tether => this.tether = tether}>
+  <Target/>
+  <Element onResize={() => this.tether && this.tether.position()}
+</TetherComponent>
 ```
 
 ## Run Example
