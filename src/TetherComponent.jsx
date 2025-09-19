@@ -3,6 +3,11 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Tether from 'tether';
 
+// https://github.com/facebook/react/blob/main/packages/shared/ReactDOMSharedInternals.js
+const ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+
+const findDOMNode = (instance) => ReactDOM.findDOMNode ? ReactDOM.findDOMNode(instance) : ReactDOMSharedInternals.findDOMNode(instance);
+
 if (!Tether) {
   console.error(
     'It looks like Tether has not been included. Please load this dependency first https://github.com/HubSpot/tether'
@@ -207,7 +212,7 @@ class TetherComponent extends Component {
     // If no element component provided, bail out
     let shouldDestroy = !this._elementComponent || !this._targetComponent;
     if (!shouldDestroy) {
-      this._targetNode = ReactDOM.findDOMNode(this);
+      this._targetNode = findDOMNode(this);
       shouldDestroy = !this._targetNode;
     }
 
